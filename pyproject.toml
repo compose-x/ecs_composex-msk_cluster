@@ -6,6 +6,11 @@ authors = ["johnpreston <john@compose-x.io>"]
 license = "MPL-2.0"
 
 classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Intended Audience :: System Administrators",
+  "Intended Audience :: Information Technology",
+  "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
   "Natural Language :: English",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.7",
@@ -13,7 +18,16 @@ classifiers = [
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
 ]
+
 readme = "README.rst"
+
+include = [
+  "LICENSE",
+  "MANIFEST.in",
+  "NOTICES.rst",
+  "ecs_composex/**/*.json"
+]
+exclude = ["*.pyc", "*~", "*pycache*"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
@@ -33,12 +47,14 @@ sphinx-material = "^0.0.35"
 sphinx-jsonschema = "^1.18.1"
 sphinx-autodoc-typehints = "^1.18.1"
 pyupgrade = "^2.32.0"
+twine = "^4.0.0"
 
 
 [tool.poetry.urls]
 "ECS ComposeX" = "https://github.com/compose-x/ecs_composex/"
 "Compose-X Labs" = "https://labs.compose-x.io/"
 "Compose-X Blog" = "https://blog.compose-x.io/"
+
 
 [tool.black]
 line-length = 88

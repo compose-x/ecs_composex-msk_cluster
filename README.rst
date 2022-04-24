@@ -3,12 +3,12 @@
     :description: ECS Compose-X MSK Cluster
     :keywords: AWS, ECS, docker, compose, MSK, kafka
 
-####################
+================
 msk_cluster
-####################
+================
 
 .. image:: https://img.shields.io/pypi/v/ecs_composex_msk_cluster.svg
-        :target: https://pypi.python.org/pypi/ecs_composex_msk_cluster
+    :target: https://pypi.python.org/pypi/ecs_composex_msk_cluster
 
 
 This package is an extension to `ECS Compose-X`_ that manages Creation of new MSK clusters and automatically links
@@ -35,11 +35,11 @@ Syntax Reference
 
 .. code-block:: yaml
 
-x-msk_cluster:
-      Properties: {}
-      Lookup: {}
-      Settings: {}
-      Services: {}
+    x-msk_cluster:
+          Properties: {}
+          Lookup: {}
+          Settings: {}
+          Services: {}
 
 Properties
 --------------

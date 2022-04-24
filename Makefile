@@ -86,3 +86,8 @@ dist: clean ## builds source and wheel package
 
 install: clean conform ## install the package to the active Python's site-packages
 	pip install . --use-pep517 #--use-feature=in-tree-build
+
+release-test: dist ## package and upload a release
+	twine check dist/* || echo Failed to validate release
+	poetry config repositories.pypitest https://test.pypi.org/legacy/
+	poetry publish -r pypitest --build
