@@ -1,0 +1,16 @@
+version: "3.8"
+
+x-msk_cluster: {}
+
+services:
+  proxy:
+    x-scaling:
+      Range: 1-4
+
+  backend:
+    x-scaling:
+      Range: 1-4
+
+  etl:
+    x-scaling:
+      Range: 0-12
