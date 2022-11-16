@@ -1,18 +1,118 @@
 version: "3.8"
 
 x-msk_cluster:
+#  existing-cluster:
+#    Lookup:
+#      Tags:
+#        - Name: api-testing
+
   new-cluster:
     Properties:
-      ClusterName: ClusterWithRequiredProperties
-      KafkaVersion: "2.2.1"
-      NumberOfBrokerNodes: 3
+      ClusterName: testingcluster
+      KafkaVersion: "3.3.1"
+      NumberOfBrokerNodes: 2
       BrokerNodeGroupInfo:
         InstanceType: "kafka.m5.large"
-        ClientSubnets: x-vpc::StorageSubnets
+        ClientSubnets:
+          - x-vpc::vpc::StorageSubnets
+      ClientAuthentication:
+        Unauthenticated:
+          Enabled: False
+        Sasl:
+          Iam:
+            Enabled: true
+          Scram:
+            Enabled: false
+        Tls:
+          Enabled: false
+      EncryptionInfo:
+        EncryptionInTransit:
+          InCluster: true
+          ClientBroker: TLS
+        EncryptionAtRest:
+          DataVolumeKMSKeyId: arn:aws:kms:eu-west-1:373709687836:key/4dbcf779-aebc-4c44-8713-3c56b337e4f5 #x-kms::msk-encryption-key::Arn
+    MacroParameters:
+      StorageScaling:
+        MaxInGB: 2048
+        Target: 42.0
     Services:
-      nginx:
-        Access: RW
-        ReturnValues: {}
+      etl:
+        Access:
+          MSKCluster: RO
+        KafkaAccess:
+          Iam:
+            topic:
+              Admin:
+                - my-app-topics*
+              Consumer:
+                - '*'
+            group:
+              Producer:
+                - my-consumer-group-app
+            transactional-id:
+              Producer:
+                - "*"
+
+
+#  another-new-cluster:
+#    Properties:
+#      ClusterName: ClusterWithAllProperties
+#      KafkaVersion: 2.2.1
+#      NumberOfBrokerNodes: 3
+#      EnhancedMonitoring: PER_BROKER
+#      EncryptionInfo:
+#        EncryptionAtRest:
+#          DataVolumeKMSKeyId: x-kms::msk-encryption-key::Arn
+#          EncryptionInTransit:
+#            ClientBroker: TLS
+#            InCluster: true
+#      OpenMonitoring:
+#        Prometheus:
+#          JmxExporter:
+#            EnabledInBroker: "true"
+#          NodeExporter:
+#            EnabledInBroker: "true"
+#      ConfigurationInfo:
+#        Arn: ReplaceWithConfigurationArn
+#        Revision: 1
+#      Tags:
+#        Environment: Test
+#        Owner: QATeam
+#      BrokerNodeGroupInfo:
+#        BrokerAZDistribution: DEFAULT
+#        InstanceType: kafka.m5.large
+#        ConnectivityInfo:
+#          PublicAccess:
+#            Type: SERVICE_PROVIDED_EIPS
+#        SecurityGroups:
+#          - ReplaceWithSecurityGroupId
+#        StorageInfo:
+#          EBSStorageInfo:
+#            VolumeSize: 100
+#        ClientSubnets:
+#          - x-vpc::vpc::PublicSubnets
+#    Services:
+#      etl:
+#        Access:
+#          MSKCluster: RO
+#        KafkaAccess:
+#          Iam:
+#            topic:
+#              Admin:
+#                - my-app-topics*
+#              Reader:
+#                - '*'
+#            group:
+#              Reader:
+#                - my-consumer-group-app
+#            cluster: Reader
+
+
+#x-kms:
+#  msk-encryption-key:
+#    Properties: { }
+#    MacroParameters:
+#      Alias: alias/msk/testing-encryption-key
 
 services:
   proxy:
