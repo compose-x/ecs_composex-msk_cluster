@@ -95,7 +95,6 @@ class MskCluster(NetworkXResource):
                         0
                     ].service_networking.ecs_network_config
             if self.cluster_arn_parameter:
-                print("LINKING CLUSTER")
                 link_resource_to_services(
                     settings,
                     self,

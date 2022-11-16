@@ -83,7 +83,7 @@ def allow_clients_sg_ingress(cluster) -> list[If]:
                         "IpProtocol": 6,
                     },
                     {
-                        "Description": f"SASL IAM Public Access",
+                        "Description": f"SASL IAM Private Access",
                         "FromPort": FindInMap("MSKPorts", "Private", "Iam"),
                         "ToPort": FindInMap("MSKPorts", "Private", "Iam"),
                         "SourceSecurityGroupId": GetAtt(
@@ -94,7 +94,7 @@ def allow_clients_sg_ingress(cluster) -> list[If]:
                     },
                 ],
                 {
-                    "Description": f"SASL IAM Public Access",
+                    "Description": f"SASL IAM Private Access",
                     "FromPort": FindInMap("MSKPorts", "Private", "Iam"),
                     "ToPort": FindInMap("MSKPorts", "Private", "Iam"),
                     "SourceSecurityGroupId": GetAtt(

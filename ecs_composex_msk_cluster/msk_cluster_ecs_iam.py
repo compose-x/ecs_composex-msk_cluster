@@ -71,7 +71,7 @@ def handle_topic_iam_policy(
             )
             continue
         access_type_statement: dict = {
-            "Sid": access_type,
+            "Sid": f"Topic{access_type}",
             "Effect": "Allow",
             "Action": MSK_TOPIC_PERMS_MAPPING[access_type],
             "Resource": [
@@ -105,7 +105,7 @@ def handle_group_iam_policy(
             continue
 
         access_type_statement: dict = {
-            "Sid": access_type,
+            "Sid": f"Group{access_type}",
             "Effect": "Allow",
             "Action": MSK_GROUP_PERMS_MAPPING[access_type],
             "Resource": [
@@ -138,7 +138,7 @@ def handle_transactional_iam_policy(
             )
             continue
         access_type_statement: dict = {
-            "Sid": access_type,
+            "Sid": f"Transactions{access_type}",
             "Effect": "Allow",
             "Action": MSK_TRANSACTIONAL_IDS_PERMS_MAPPING[access_type],
             "Resource": [
