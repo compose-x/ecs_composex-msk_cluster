@@ -1,7 +1,7 @@
 
 .. meta::
     :description: ECS Compose-X MSK Cluster
-    :keywords: AWS, ECS, docker, compose, MSK, kafka
+    :keywords: AWS, ECS, MSK, Kafka, compose
 
 ====================
 Use the extension
@@ -11,15 +11,14 @@ To use the extension, after installing the package, simply create a YAML file (o
 add ``x-msk_cluster``, to define new MSK clusters to create/lookup.
 
 
-.. literalinclude:: ../use-cases/create_only/services.yaml
+.. literalinclude:: ../use-cases/conduktor.yaml
     :language: yaml
 
 
 Then we simply run the following command
 
 
-.. code-block:: bash
+.. code-block:: console
 
 
-    ecs-compose-x render -n project-with-msk -f <file_name>
-
+    ecs-compose-x render -d templates -n conduktor-msk-iam -f use-cases/conduktor.yaml
