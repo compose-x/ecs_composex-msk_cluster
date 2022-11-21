@@ -1,0 +1,131 @@
+version: "3.8"
+
+x-msk_cluster:
+  new-cluster:
+    Lookup:
+      Cluster:
+        Tags:
+          - Name: msk-lookup
+      ClientsSecurityGroup:
+        Tags:
+          - aws:cloudformation:logical-id: newclusterClientsSecurityGroup
+    Services:
+      conduktor-platform:
+        Access:
+          MSKCluster: RO
+        KafkaAccess:
+          Iam:
+            topic:
+              Admin:
+                - "*"
+            group:
+              Admin:
+                - "*"
+            transactional-id:
+              Producer:
+                - "*"
+
+services:
+  conduktor-platform:
+    image: conduktor/conduktor-platform:${CDK_VERSION:-latest}
+    ports:
+      - 8080:8080
+    volumes:
+      - conduktor_data:/var/conduktor
+      - conduktor_config:/etc/conduktor
+    networks:
+      public:
+    x-network:
+      AssignPublicIp: true
+    environment:
+      CDK_IN_CONF_FILE: /etc/conduktor/config.yaml
+      CDK_LISTENING_PORT: 8080
+      PLATFORM_LISTENING_PORT: 8080
+      RUN_MODE: small
+      CDK_DEBUG: "false"
+    deploy:
+      replicas: 1
+      labels:
+        ecs.task.family: conduktor-platform
+      resources:
+        reservations:
+          cpus: 2.0
+          memory: 4GB
+        limits:
+          memory: 16GB
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sq --fail http://localhost:8080/platform/api/modules/health/live"]
+      interval: 30s
+      start_period: 120s # Leave time for the psql init scripts to run
+      timeout: 5s
+      retries: 3
+    x-ecs:
+      EnableExecuteCommand: True
+      CapacityProviderStrategy:
+        - CapacityProvider: FARGATE
+          Base: 1
+          Weight: 1
+    depends_on:
+      - conduktor-platform-config
+    x-scaling:
+      Range: 1-2
+
+  conduktor-platform-config:
+    image: public.ecr.aws/compose-x/ecs-files-composer
+    deploy:
+      labels:
+        ecs.task.family: conduktor-platform
+        ecs.depends.condition: SUCCESS
+    volumes:
+      - conduktor_config:/etc/conduktor
+    environment:
+      MSK_CLUSTER_ARN: x-msk_cluster::new-cluster::ClusterArn
+      ECS_CONFIG_CONTENT: |
+        files:
+          /etc/conduktor/config.yaml:
+            context: jinja2
+            content: |
+              auth:
+                local-users:
+                  - email: replace@me.net
+                    password: !Repl4ceMe!
+                    groups:
+                      - ADMIN
+              organization:
+                name: ${ORG_NAME:-testing}
+              clusters:
+                - id: amazon-msk-iam
+                  name: Amazon MSK IAM
+                  color: #FF9900
+                  bootstrapServers: {{ msk_bootstrap(env_var('MSK_CLUSTER_ARN'), 'BootstrapBrokerStringSaslIam') }}
+                  properties: |
+                    security.protocol=SASL_SSL
+                    sasl.mechanism=AWS_MSK_IAM
+                    sasl.jaas.config=software.amazon.msk.auth.iam.IAMLoginModule required;
+                    sasl.client.callback.handler.class=software.amazon.msk.auth.iam.IAMClientCallbackHandler
+
+# sasl.client.callback.handler.class=io.conduktor.aws.IAMClientCallbackHandler
+volumes:
+  conduktor_config: {}
+  conduktor_data: {}
+
+networks:
+  public:
+    x-vpc: PublicSubnets
+
+x-vpc:
+#  Properties:
+#    DisableNat: True
+  Lookup:
+    VpcId:
+      Tags:
+        - Name: msk-lookup
+    PublicSubnets:
+      Tags:
+        - vpc::usage: public
+    AppSubnets:
+      Tags:
+        - vpc::usage: public
+    StorageSubnets:
+      Tags:
+        - vpc::usage: storage

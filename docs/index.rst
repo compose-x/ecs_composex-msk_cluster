@@ -1,19 +1,18 @@
 
 .. meta::
     :description: ECS Compose-X MSK Cluster
-    :keywords: AWS, ECS, docker, compose, MSK, kafka
+    :keywords: AWS, ECS, MSK, compose
 
 .. image:: https://img.shields.io/pypi/v/ecs_composex_msk_cluster.svg
         :target: https://pypi.python.org/pypi/ecs_composex_msk_cluster
 
 
-This package is an extension to `ECS Compose-X`_ that manages Creation of new MSK clusters and automatically links
-to services to grant access and permissions.
+This package is an extension to `ECS Compose-X`_ to create or use AWS Managed Kafka Clusters (MSK).
 
-Install
-==========
+Installation
+=============
 
-.. code-block:: bash
+.. code-block::
 
     python3 -m venv venv
     source venv/bin/activate
@@ -26,51 +25,27 @@ Install
     pip install pip -U
     pip install ecs-composex-msk-cluster
 
-Syntax Reference
-==================
 
-.. code-block:: yaml
+Usage
+=======
 
-    x-msk_cluster:
-          Properties: {}
-          Lookup: {}
-          Settings: {}
-          Services: {}
+To use this module, after installing it, set `x-msk_cluster` in your docker-compose file, and link your services to it.
+For example, with the Conduktor Platform
 
-Properties
---------------
+.. code-block:: console
 
-See `Properties for MSK Cluster`_ in AWS Cloudformation documentation.
-
-
-Lookup
---------
-
-Lookup is not yet implemented.
-
-Services
----------
-
-Mappings between the MSK cluster and the services. To be implemented.
-
-
-Test files
-===========
-
-.. literalinclude:: ../use-cases/create_only/services.yaml
-    :language: yaml
-
+    ecs-compose-x render -d templates -f use-cases/conduktor.yaml -p conduktor-msk-iam
 
 .. _ECS Compose-X: https://docs.compose-x.io
-.. _Properties for MSK Cluster: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-msk-cluster.html
 
 
 .. toctree::
    :maxdepth: 2
-   :caption: x-msk_cluster:
+   :caption: Content
 
    installation
    usage
+   syntax
    modules
    contributing
    authors

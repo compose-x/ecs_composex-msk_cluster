@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "ecs_composex_msk_cluster"
 version = "0.0.1post0"
-description = "msk_cluster - Module for ECS Compose-X"
+description = "msk_cluster - AWS MSK Cluster module for ECS Compose-X"
 authors = ["johnpreston <john@compose-x.io>"]
 license = "MPL-2.0"
 
@@ -42,19 +42,20 @@ pytest = "^7.2"
 behave = "^1.2.6"
 pre-commit = "^2.14.0"
 tbump = "^6.7.0"
-Sphinx = "^4.5.0"
-sphinx-material = "^0.0.35"
-sphinx-jsonschema = "^1.18.1"
-sphinx-autodoc-typehints = "^1.19"
 pyupgrade = "^3.2"
 twine = "^4.0.0"
+
+[tool.poetry.group.docs.dependencies]
+sphinx = "^5.3.0"
+sphinx-material = "^0.0.35"
+sphinx-jsonschema = "^1.19.1"
+sphinx-autodoc-typehints = "^1.19.5"
 
 
 [tool.poetry.urls]
 "ECS ComposeX" = "https://github.com/compose-x/ecs_composex/"
 "Compose-X Labs" = "https://labs.compose-x.io/"
 "Compose-X Blog" = "https://blog.compose-x.io/"
-
 
 [tool.black]
 line-length = 88

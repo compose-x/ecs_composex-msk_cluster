@@ -1046,7 +1046,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "sphinx"
-version = "4.5.0"
+version = "5.3.0"
 description = "Python documentation generator"
 category = "dev"
 optional = false
@@ -1054,16 +1054,16 @@ python-versions = ">=3.6"
 
 [package.dependencies]
 alabaster = ">=0.7,<0.8"
-babel = ">=1.3"
-colorama = {version = ">=0.3.5", markers = "sys_platform == \"win32\""}
-docutils = ">=0.14,<0.18"
-imagesize = "*"
-importlib-metadata = {version = ">=4.4", markers = "python_version < \"3.10\""}
-Jinja2 = ">=2.3"
-packaging = "*"
-Pygments = ">=2.0"
+babel = ">=2.9"
+colorama = {version = ">=0.4.5", markers = "sys_platform == \"win32\""}
+docutils = ">=0.14,<0.20"
+imagesize = ">=1.3"
+importlib-metadata = {version = ">=4.8", markers = "python_version < \"3.10\""}
+Jinja2 = ">=3.0"
+packaging = ">=21.0"
+Pygments = ">=2.12"
 requests = ">=2.5.0"
-snowballstemmer = ">=1.1"
+snowballstemmer = ">=2.0"
 sphinxcontrib-applehelp = "*"
 sphinxcontrib-devhelp = "*"
 sphinxcontrib-htmlhelp = ">=2.0.0"
@@ -1073,23 +1073,24 @@ sphinxcontrib-serializinghtml = ">=1.1.5"
 
 [package.extras]
 docs = ["sphinxcontrib-websupport"]
-lint = ["docutils-stubs", "flake8 (>=3.5.0)", "isort", "mypy (>=0.931)", "types-requests", "types-typed-ast"]
-test = ["cython", "html5lib", "pytest", "pytest-cov", "typed-ast"]
+lint = ["docutils-stubs", "flake8 (>=3.5.0)", "flake8-bugbear", "flake8-comprehensions", "flake8-simplify", "isort", "mypy (>=0.981)", "sphinx-lint", "types-requests", "types-typed-ast"]
+test = ["cython", "html5lib", "pytest (>=4.6)", "typed_ast"]
 
 [[package]]
 name = "sphinx-autodoc-typehints"
-version = "1.19.1"
+version = "1.19.5"
 description = "Type hints (PEP 484) support for the Sphinx autodoc extension"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 
 [package.dependencies]
-Sphinx = ">=4.5"
+sphinx = ">=5.3"
 
 [package.extras]
-testing = ["covdefaults (>=2.2)", "coverage (>=6.3)", "diff-cover (>=6.4)", "nptyping (>=2.1.2)", "pytest (>=7.1)", "pytest-cov (>=3)", "sphobjinv (>=2)", "typing-extensions (>=4.1)"]
-type-comments = ["typed-ast (>=1.5.2)"]
+docs = ["furo (>=2022.9.29)", "sphinx (>=5.3)", "sphinx-autodoc-typehints (>=1.19.4)"]
+testing = ["covdefaults (>=2.2)", "coverage (>=6.5)", "diff-cover (>=7.0.1)", "nptyping (>=2.3.1)", "pytest (>=7.2)", "pytest-cov (>=4)", "sphobjinv (>=2.2.2)", "typing-extensions (>=4.4)"]
+type-comment = ["typed-ast (>=1.5.4)"]
 
 [[package]]
 name = "sphinx-jsonschema"
@@ -1384,7 +1385,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "03fb0a495ce1497c7c8a33b57420dda6ee26a2be2eb00ff2b326f167315229f4"
+content-hash = "272619c7966efbef9167cf4978a88d200f4637e1777fd41691b5a8cc08283db2"
 
 [metadata.files]
 alabaster = [
@@ -2065,12 +2066,12 @@ soupsieve = [
     {file = "soupsieve-2.3.2.post1.tar.gz", hash = "sha256:fc53893b3da2c33de295667a0e19f078c14bf86544af307354de5fcf12a3f30d"},
 ]
 sphinx = [
-    {file = "Sphinx-4.5.0-py3-none-any.whl", hash = "sha256:ebf612653238bcc8f4359627a9b7ce44ede6fdd75d9d30f68255c7383d3a6226"},
-    {file = "Sphinx-4.5.0.tar.gz", hash = "sha256:7bf8ca9637a4ee15af412d1a1d9689fec70523a68ca9bb9127c2f3eeb344e2e6"},
+    {file = "Sphinx-5.3.0.tar.gz", hash = "sha256:51026de0a9ff9fc13c05d74913ad66047e104f56a129ff73e174eb5c3ee794b5"},
+    {file = "sphinx-5.3.0-py3-none-any.whl", hash = "sha256:060ca5c9f7ba57a08a1219e547b269fadf125ae25b06b9fa7f66768efb652d6d"},
 ]
 sphinx-autodoc-typehints = [
-    {file = "sphinx_autodoc_typehints-1.19.1-py3-none-any.whl", hash = "sha256:9be46aeeb1b315eb5df1f3a7cb262149895d16c7d7dcd77b92513c3c3a1e85e6"},
-    {file = "sphinx_autodoc_typehints-1.19.1.tar.gz", hash = "sha256:6c841db55e0e9be0483ff3962a2152b60e79306f4288d8c4e7e86ac84486a5ea"},
+    {file = "sphinx_autodoc_typehints-1.19.5-py3-none-any.whl", hash = "sha256:ea55b3cc3f485e3a53668bcdd08de78121ab759f9724392fdb5bf3483d786328"},
+    {file = "sphinx_autodoc_typehints-1.19.5.tar.gz", hash = "sha256:38a227378e2bc15c84e29af8cb1d7581182da1107111fd1c88b19b5eb7076205"},
 ]
 sphinx-jsonschema = [
     {file = "sphinx-jsonschema-1.19.1.tar.gz", hash = "sha256:b2385fe1c7acf2e759152aefed0cb17c920645b2a75c9934000c9c528e7d53c1"},
