@@ -5,6 +5,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from compose_x_common.aws.msk import MSK_CLUSTER_ARN_RE
+from compose_x_common.compose_x_common import keyisset
+from ecs_composex.common import ComposeXSettings
+from ecs_composex.ingress_settings import lookup_security_group
+from troposphere.msk import Cluster as CfnMskCluster
+
 if TYPE_CHECKING:
     from ecs_composex.mods_manager import XResourceModule
     from ecs_composex.common.settings import ComposeXSettings
@@ -56,6 +62,13 @@ class MskCluster(NetworkXResource):
     def cluster_uuid(self):
         if self.cfn_resource:
             return Select(1, Split(":cluster/", Ref(self.cfn_resource)))
+        else:
+            return Select(
+                1,
+                Split(
+                    ":cluster/", self.attributes_outputs[MSK_CLUSTER_ARN]["ImportValue"]
+                ),
+            )
 
     def init_outputs(self):
         self.output_properties: dict = {
@@ -78,13 +91,9 @@ class MskCluster(NetworkXResource):
         """
         Maps a database service to ECS services
         """
-        if not self.mappings and self.cfn_resource:
-            for target in self.families_targets:
-                if target[0].service_compute.launch_type != "EXTERNAL":
-                    LOG.warning(
-                        f"{self.stack.title} - {target[0].name} - "
-                        "When using EXTERNAL Launch Type, networking settings cannot be set."
-                    )
+        for target in self.families_targets:
+            if target[0].service_compute.launch_type != "EXTERNAL":
+                if self.cfn_resource:
                     client_sg_id = self.add_attribute_to_another_stack(
                         target[0].stack, self.clients_security_group_param, settings
                     )
@@ -94,11 +103,70 @@ class MskCluster(NetworkXResource):
                     target[0].ecs_service.ecs_service.NetworkConfiguration = target[
                         0
                     ].service_networking.ecs_network_config
-            if self.cluster_arn_parameter:
-                link_resource_to_services(
-                    settings,
-                    self,
-                    arn_parameter=self.cluster_arn_parameter,
-                    access_subkeys=["MSKCluster"],
+                elif (
+                    self.lookup_properties
+                    and MSK_CLUSTER_CLIENTS_SHARED_SG in self.lookup_properties
+                    and MSK_CLUSTER_CLIENTS_SHARED_SG in self.attributes_outputs
+                ):
+                    LOG.info(
+                        f"{self.module.res_key}.{self.name} - "
+                        "Associating found ClientsSecurityGroup from Lookup."
+                    )
+                    target[0].service_networking.extra_security_groups.append(
+                        self.attributes_outputs[MSK_CLUSTER_CLIENTS_SHARED_SG][
+                            "ImportValue"
+                        ]
+                    )
+                    target[0].ecs_service.ecs_service.NetworkConfiguration = target[
+                        0
+                    ].service_networking.ecs_network_config
+            else:
+                LOG.warning(
+                    f"{self.stack.title} - {target[0].name} - "
+                    "When using EXTERNAL Launch Type, networking settings cannot be set."
                 )
+        if self.cluster_arn_parameter:
+            link_resource_to_services(
+                settings,
+                self,
+                arn_parameter=self.cluster_arn_parameter,
+                access_subkeys=["MSKCluster"],
+            )
             handle_kafka_iam_permissions(self, settings)
+
+
+def describe_kafka_cluster(
+    cluster: MskCluster, account_id: str, resource_id: str
+) -> dict:
+    client = cluster.lookup_session.client("kafka")
+    cluster_r = client.describe_cluster_v2(ClusterArn=resource_id)
+    return cluster_r["ClusterInfo"]
+
+
+def define_msk_clusters_mappings(module: XResourceModule, settings: ComposeXSettings):
+    for cluster in module.lookup_resources:
+        cluster.init_outputs()
+        cluster.lookup_resource(
+            MSK_CLUSTER_ARN_RE,
+            describe_kafka_cluster,
+            CfnMskCluster.resource_type,
+            "kafka:cluster",
+            "Cluster",
+            use_arn_for_id=True,
+        )
+        if keyisset("ClientsSecurityGroup", cluster.lookup):
+            client_sg = lookup_security_group(
+                settings, cluster.lookup["ClientsSecurityGroup"]
+            )
+            cluster.lookup_properties.update({MSK_CLUSTER_CLIENTS_SHARED_SG: client_sg})
+            cluster.generate_cfn_mappings_from_lookup_properties()
+            cluster.generate_outputs()
+        else:
+            LOG.warning(
+                f"{module.res_key}.{cluster.name} - "
+                "ClientsSecurityGroup not set. Inbound to MSK might not work."
+            )
+
+        settings.mappings[module.mapping_key].update(
+            {cluster.logical_name: cluster.mappings}
+        )

@@ -20,6 +20,8 @@ from ecs_composex.common.troposphere_tools import add_resource
 from troposphere import Ref, Select, Split, Sub
 from troposphere.iam import PolicyType
 
+from .msk_cluster_params import MSK_CLUSTER_ARN
+
 MSK_TOPIC_PERMS_MAPPING: dict = {
     "Admin": [
         "kafka-cluster:*Topic*",
@@ -184,18 +186,26 @@ def handle_iam_kafka_resources_access(
     """
     Creates IAM Policies for access to MSK resources [topic, group, cluster, transactional-id]
     """
-    cluster_arn_id = resource.add_attribute_to_another_stack(
-        family.stack, resource.cluster_arn_parameter, settings
-    )
-    cluster_arn_prefix = Select(
-        0, Split(":cluster/", Ref(cluster_arn_id["ImportParameter"]))
-    )
+    if resource.cfn_resource:
+        cluster_arn_id = resource.add_attribute_to_another_stack(
+            family.stack, resource.cluster_arn_parameter, settings
+        )
+        cluster_arn_prefix = Select(
+            0, Split(":cluster/", Ref(cluster_arn_id["ImportParameter"]))
+        )
+    else:
+        cluster_arn_id = resource.attributes_outputs[MSK_CLUSTER_ARN]["ImportValue"]
+        cluster_arn_prefix = Select(0, Split(":cluster/", cluster_arn_id))
 
     statement: list = [
         {
             "Sid": "ConnectToCluster",
             "Effect": "Allow",
-            "Resource": [Ref(cluster_arn_id["ImportParameter"])],
+            "Resource": [
+                Ref(cluster_arn_id["ImportParameter"])
+                if resource.cfn_resource
+                else cluster_arn_id
+            ],
             "Action": ["kafka-cluster:Connect"],
         }
     ]

@@ -20,7 +20,17 @@
   ],
   "properties": {
     "Lookup": {
-      "$ref": "x-resources.common.spec.json#/definitions/Lookup"
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["Cluster"],
+      "properties": {
+        "Cluster": {
+          "$ref": "x-resources.common.spec.json#/definitions/Lookup"
+        },
+        "ClientsSecurityGroup": {
+          "$ref": "x-resources.common.spec.json#/definitions/Lookup"
+        }
+      }
     },
     "Properties": {
       "type": "object",
@@ -40,6 +50,28 @@
         "CreateLogGroup": {
           "type": "boolean",
           "description": "Creates a new CloudWatch Log Group for the Broker logs"
+        },
+        "CreateKafkaConfiguration": {
+          "description": "AWS::MSK::Configuration Properties or just the Kafka ``server.properties``",
+          "oneOf": [
+            {
+              "type": "object",
+              "description": "The Properties of https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-msk-configuration.html#cfn-msk-configuration-serverproperties"
+            },
+            {
+              "type": "string",
+              "description": "raw content for ``server.properties``"
+            },
+            {
+              "type": "array",
+              "uniqueItems": true,
+              "description": "Array representation of key=value of ``server.properties``",
+              "items": {
+                "type": "string",
+                "format": "(\\S+)=(\\S+)$"
+              }
+            }
+          ]
         },
         "StorageScaling": {
           "type": "object",

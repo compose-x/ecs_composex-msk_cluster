@@ -36,20 +36,6 @@ def str_to_bool(input_var: Union[str, bool]) -> bool:
     return False
 
 
-def client_broker_auth_modes(broker_client_mode: str) -> Union[None, list[str]]:
-    modes: list = []
-    if not isinstance(broker_client_mode, str):
-        return None
-    if broker_client_mode == "PLAINTEXT":
-        modes.append("Plaintext")
-    elif broker_client_mode == "TLS_PLAINTEXT":
-        modes.append("Tls")
-        modes.append("Plaintext")
-    else:
-        modes.append("Tls")
-    return modes
-
-
 def allow_clients_sg_ingress(cluster) -> list[If]:
     rules: list = []
 

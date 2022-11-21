@@ -12,9 +12,9 @@ if TYPE_CHECKING:
 
 from compose_x_common.aws.msk import list_all_kafka_versions
 from compose_x_common.compose_x_common import keyisset, set_else_none
-from ecs_composex.common import get_nested_property
 from ecs_composex.common.cfn_conditions import define_stack_name
 from ecs_composex.common.cfn_params import ROOT_STACK_NAME
+from ecs_composex.common.logging import LOG
 from ecs_composex.common.stacks import ComposeXStack
 from ecs_composex.common.troposphere_tools import (
     add_outputs,
@@ -28,7 +28,7 @@ from ecs_composex.vpc.vpc_params import (
     STORAGE_SUBNETS,
     VPC_ID,
 )
-from troposphere import AccountId, GetAtt, Output, Ref, Sub
+from troposphere import GetAtt, Output, Ref, Sub
 from troposphere.ec2 import SecurityGroup
 from troposphere.msk import Cluster as AwsMskCluster
 
@@ -51,7 +51,6 @@ from .msk_cluster_params import (
     MSK_CLUSTER_USE_SASL_SCRAM,
     MSK_PORTS_MAPPING,
 )
-from .msk_configuration import MskConfiguration
 from .msk_sg_ingress import handle_msk_auth_settings
 from .msk_storage_scaling import add_storage_scaling
 
@@ -120,13 +119,15 @@ def build_msk_clusters(module: XResourceModule, msk_top_stack: ComposeXStack):
     """
     for cluster in module.new_resources:
         cluster_template = set_msk_cluster_template(module, cluster)
-        # msk_cluster_config = add_resource(
-        #     template,
-        #     MskConfiguration(
-        #         f"{cluster.logical_name}Configuration",
-        #         Name=f"{cluster.logical_name}Configuration",
-        #     ),
-        # )
+        if cluster.parameters and keyisset(
+            "CreateKafkaConfiguration", cluster.parameters
+        ):
+            LOG.warning(
+                f"{cluster.module.res_key}.{cluster.name} - "
+                "At the moment, the AWS::MSK::Configuration does not return the Revision. "
+                "Therefore cannot be used here yet. "
+                "See https://github.com/aws-cloudformation/cloudformation-coverage-roadmap/issues/1138"
+            )
         cluster.clients_security_group = add_resource(
             cluster_template,
             SecurityGroup(
@@ -205,7 +206,6 @@ def build_msk_clusters(module: XResourceModule, msk_top_stack: ComposeXStack):
         add_resource(cluster_template, cluster.cfn_resource)
         add_storage_scaling(cluster, cluster_template)
         add_resource(msk_top_stack.stack_template, cluster_stack)
-        print("TOP STACK PARAMS AFTER ADD", msk_top_stack.Parameters)
         cluster.init_outputs()
         cluster.generate_outputs()
         add_outputs(cluster_template, cluster.outputs)

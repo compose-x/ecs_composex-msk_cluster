@@ -16,7 +16,7 @@ MSK_CLUSTER_SG_PARAM = Parameter(
 
 MSK_CLUSTER_ARN_T = "ClusterArn"
 MSK_CLUSTER_ARN = Parameter(MSK_CLUSTER_ARN_T, group_label=GROUP_LABELS, Type="String")
-MSK_CLUSTER_CLIENTS_SHARED_SG_T = "MSKClientsSecurityGroupId"
+MSK_CLUSTER_CLIENTS_SHARED_SG_T = "MSKClientsSecurityGroup"
 MSK_CLUSTER_CLIENTS_SHARED_SG = Parameter(
     MSK_CLUSTER_CLIENTS_SHARED_SG_T,
     return_value="GroupId",
