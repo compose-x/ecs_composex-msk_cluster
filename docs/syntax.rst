@@ -49,7 +49,17 @@ Lookup
 The Lookup for MSK allows to use an existing MSK Cluster and setup all the appropriate IAM permissions to access said
 cluster.
 
-Additionally, you can set `ClientsSecurityGroup`_ which will allow you to automatically add an existing Security Group
+Lookup.Cluster
+---------------
+
+Tags associated with the MSK cluster. The tags must point to a single cluster. If multiple clusters match with the given
+tags, the lookup will result in error.
+
+
+Lookup.ClientsSecurityGroup
+---------------------------
+
+You can set ``ClientsSecurityGroup`` which will allow you to automatically add an existing Security Group
 which would have access to the MSK cluster in order to provide yourself with access to said cluster, on the network.
 
 For example, the below Lookup will search for a cluster with tag **Name** and value **msk-lookup**. It will also
@@ -66,3 +76,5 @@ look for a security group to use for the services in addition to their new defau
           ClientsSecurityGroup:
             Tags:
               - aws:cloudformation:logical-id: newclusterClientsSecurityGroup
+
+.. _Properties for MSK Cluster: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-msk-cluster.html

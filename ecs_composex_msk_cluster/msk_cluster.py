@@ -5,22 +5,20 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from compose_x_common.aws.msk import MSK_CLUSTER_ARN_RE
-from compose_x_common.compose_x_common import keyisset
-from ecs_composex.common import ComposeXSettings
-from ecs_composex.ingress_settings import lookup_security_group
-from troposphere.msk import Cluster as CfnMskCluster
-
 if TYPE_CHECKING:
     from ecs_composex.mods_manager import XResourceModule
     from ecs_composex.common.settings import ComposeXSettings
     from ecs_composex.mods_manager import ModManager
 
+from compose_x_common.aws.msk import MSK_CLUSTER_ARN_RE
+from compose_x_common.compose_x_common import keyisset
 from ecs_composex.common.logging import LOG
 from ecs_composex.compose.x_resources.network_x_resources import NetworkXResource
+from ecs_composex.ingress_settings import lookup_security_group
 from ecs_composex.resource_settings import link_resource_to_services
 from ecs_composex.vpc.vpc_params import STORAGE_SUBNETS
 from troposphere import GetAtt, Ref, Select, Split
+from troposphere.msk import Cluster as CfnMskCluster
 
 from ecs_composex_msk_cluster.msk_cluster_params import (
     CONTROL_CLOUD_ATTR_MAPPING,

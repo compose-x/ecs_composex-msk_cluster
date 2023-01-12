@@ -12,7 +12,7 @@ To install msk_cluster, run this command in your terminal:
 
 .. code-block:: console
 
-    pip install ecs_composex_msk_cluster
+    pip install ecs-composex-msk-cluster
 
 This is the preferred method to install msk_cluster, as it will always install the most recent stable release.
 

@@ -137,6 +137,28 @@ x-vpc:
   Properties:
     DisableNat: True
 
+x-rds:
+  conduktor:
+    MacroParameters:
+      Engine: aurora-postgresql
+      EngineVersion: "14.4"
+      UseMultiAz: true
+      Instances:
+        - DBInstanceClass: db.r6g.large
+        - DBInstanceClass: db.r6g.large
+    Services:
+      conduktor-platform:
+        Access:
+          DBCluster: RO
+        SecretsMappings:
+          Mappings:
+            host: CDK_DATABASE_HOST
+            port: CDK_DATABASE_PORT
+            dbname: CDK_DATABASE_NAME
+            username: CDK_DATABASE_USERNAME
+            password: CDK_DATABASE_PASSWORD
+
+
 #x-kms:
 #  msk-encryption-key:
 #    Properties: { }

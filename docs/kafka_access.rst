@@ -54,6 +54,19 @@ There are 4 profiles to manage topics:
 * Consumer: allows to read data from the topic(s)
 * ProducerConsumer: allows both read and write access to the topic(s)
 
++-------------------------+-----------------------------+-----------------------------+-----------------------------+
+|           Admin         |           Producer          |           Consumer          |       ProducerConsumer      |
++=========================+=============================+=============================+=============================+
+| kafka-cluster:*Topic*   | kafka-cluster:DescribeTopic | kafka-cluster:DescribeTopic | kafka-cluster:DescribeTopic |
+|                         |                             |                             |                             |
+|                         |                             |                             |                             |
+| kafka-cluster:ReadData  | kafka-cluster:WriteData     | kafka-cluster:ReadData      | kafka-cluster:WriteData     |
+|                         |                             |                             |                             |
+|                         |                             |                             |                             |
+| kafka-cluster:WriteData |                             |                             | kafka-cluster:ReadData      |
++-------------------------+-----------------------------+-----------------------------+-----------------------------+
+
+
 group
 ******
 
@@ -62,12 +75,31 @@ There are 2 profiles to manage consumer groups
 * Admin: grants all Kafka ACLs on the security group, including delete
 * Consumer: grants normal use of the consumer group(s) for the application.
 
++-----------------------------+-----------------------------+
+|            Admin            |          Consumer           |
++=============================+=============================+
+| kafka-cluster:DescribeGroup | kafka-cluster:DescribeGroup |
+|                             |                             |
+| kafka-cluster:AlterGroup    | kafka-cluster:AlterGroup    |
+|                             |                             |
+| kafka-cluster:DeleteGroup   |                             |
++-----------------------------+-----------------------------+
+
 transactional-id
 *****************
 
 There is 1 profile for Kafka transactional IDs.
 
 * Producer: allows all Kafka ACLs related to Transactional IDs
+
++---------------------------------------+
+|               Producer                |
++=======================================+
+| kafka-cluster:AlterTransactionalId    |
+|                                       |
+|                                       |
+| kafka-cluster:DescribeTransactionalId |
++---------------------------------------+
 
 Schema Definition
 ==================
