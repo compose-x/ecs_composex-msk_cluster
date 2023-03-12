@@ -25,41 +25,43 @@ def add_log_group(cluster: MskCluster, template: Template) -> None:
     """
     Creates a new Log Group for the cluster and configures the property for it.
     """
-    param, prop, value = get_nested_property(
+    resource_props_to_update: list = get_nested_property(
         cluster.cfn_resource, "LoggingInfo.BrokerLogs.CloudWatchLogs"
     )
-    if isinstance(value, CloudWatchLogs):
-        LOG.warning(
-            f"{cluster.module.res_key}.{cluster.name} - "
-            "Properties for LoggingInfo.BrokerLogs.CloudWatchLogs already set. Skipping"
-        )
-        return
-    log_group = LogGroup(f"{cluster.logical_name}BrokersLogGroup")
-    add_resource(template, log_group)
-    if value and value is not None:
-        setattr(param, prop, CloudWatchLogs(Enabled=True, LogGroup=Ref(log_group)))
-    else:
-        if not hasattr(cluster.cfn_resource, "LoggingInfo"):
-            setattr(
-                cluster.cfn_resource,
-                "LoggingInfo",
-                LoggingInfo(
-                    BrokerLogs=BrokerLogs(
-                        CloudWatchLogs=CloudWatchLogs(
-                            Enabled=True, LogGroup=Ref(log_group)
-                        )
-                    )
-                ),
+    for _resource_prop_to_update in resource_props_to_update:
+        param, prop, value = _resource_prop_to_update
+        if isinstance(value, CloudWatchLogs):
+            LOG.warning(
+                f"{cluster.module.res_key}.{cluster.name} - "
+                "Properties for LoggingInfo.BrokerLogs.CloudWatchLogs already set. Skipping"
             )
+            return
+        log_group = LogGroup(f"{cluster.logical_name}BrokersLogGroup")
+        add_resource(template, log_group)
+        if value and value is not None:
+            setattr(param, prop, CloudWatchLogs(Enabled=True, LogGroup=Ref(log_group)))
         else:
-            if not hasattr(
-                cluster.cfn_resource.LoggingInfo.BrokerLogs, "CloudWatchLogs"
-            ):
+            if not hasattr(cluster.cfn_resource, "LoggingInfo"):
                 setattr(
-                    cluster.cfn_resource.LoggingInfo,
-                    "CloudWatchLogs",
-                    CloudWatchLogs(Enabled=True, LogGroup=Ref(log_group)),
+                    cluster.cfn_resource,
+                    "LoggingInfo",
+                    LoggingInfo(
+                        BrokerLogs=BrokerLogs(
+                            CloudWatchLogs=CloudWatchLogs(
+                                Enabled=True, LogGroup=Ref(log_group)
+                            )
+                        )
+                    ),
                 )
+            else:
+                if not hasattr(
+                    cluster.cfn_resource.LoggingInfo.BrokerLogs, "CloudWatchLogs"
+                ):
+                    setattr(
+                        cluster.cfn_resource.LoggingInfo,
+                        "CloudWatchLogs",
+                        CloudWatchLogs(Enabled=True, LogGroup=Ref(log_group)),
+                    )
 
 
 def handle_logging(

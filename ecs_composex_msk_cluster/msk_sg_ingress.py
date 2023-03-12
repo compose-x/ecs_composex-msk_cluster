@@ -197,15 +197,17 @@ def handle_msk_auth_parameters(cluster: MskCluster) -> None:
         ),
     ]
     for auth_property in properties:
-        resource, prop, value = get_nested_property(
+        res_props_to_update = get_nested_property(
             cluster.cfn_resource,
             auth_property[0],
         )
-        if prop and value:
-            cluster.stack.Parameters.update(
-                {auth_property[2].title: str(auth_property[1](value))}
-            )
-            setattr(resource, prop, Ref(auth_property[2]))
+        for _prop_to_update in res_props_to_update:
+            resource, prop, value = _prop_to_update
+            if prop and value:
+                cluster.stack.Parameters.update(
+                    {auth_property[2].title: str(auth_property[1](value))}
+                )
+                setattr(resource, prop, Ref(auth_property[2]))
 
 
 def handle_msk_auth_settings(cluster: MskCluster):
@@ -214,10 +216,14 @@ def handle_msk_auth_settings(cluster: MskCluster):
         "SecurityGroupIngress",
         allow_clients_sg_ingress(cluster),
     )
-    resource, prop, value = get_nested_property(
+    resource_props_to_update = get_nested_property(
         cluster.cfn_resource,
         "BrokerNodeGroupInfo.ConnectivityInfo.PublicAccess.Type",
     )
-    if value and value == "SERVICE_PROVIDED_EIPS":
-        cluster.stack.Parameters.update({MSK_CLUSTER_ADDRESSING_TYPE.title: "PUBLIC"})
-    handle_msk_auth_parameters(cluster)
+    for _to_update in resource_props_to_update:
+        resource, prop, value = _to_update
+        if value and value == "SERVICE_PROVIDED_EIPS":
+            cluster.stack.Parameters.update(
+                {MSK_CLUSTER_ADDRESSING_TYPE.title: "PUBLIC"}
+            )
+        handle_msk_auth_parameters(cluster)
