@@ -41,22 +41,9 @@ Syntax Reference
           Settings: {}
           Services: {}
 
-Properties
---------------
+`Full documentation <https://msk-cluster.docs.compose-x.io/>`_
 
-See `Properties for MSK Cluster`_ in AWS Cloudformation documentation.
-
-
-Lookup
---------
-
-Lookup is not yet implemented.
-
-Services
----------
-
-Mappings between the MSK cluster and the services. To be implemented.
-
+Examples can be found in ``use-cases`` in this repository.
 
 .. _ECS Compose-X: https://docs.compose-x.io
 .. _Properties for MSK Cluster: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-msk-cluster.html

@@ -3,6 +3,8 @@
     :description: ECS Compose-X MSK Cluster
     :keywords: AWS, ECS, MSK, compose
 
+.. _kafka_access:
+
 KafkaAccess
 -----------------
 
