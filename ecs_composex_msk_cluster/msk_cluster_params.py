@@ -6,6 +6,24 @@ from ecs_composex.vpc.vpc_params import SG_ID_TYPE
 
 GROUP_LABELS: str = "MSK Settings"
 
+MSK_CLUSTER_INSTANCE_TYPES_T = "MskInstanceType"
+MSK_CLUSTER_INSTANCE_TYPES = Parameter(
+    MSK_CLUSTER_INSTANCE_TYPES_T,
+    Type="String",
+    AllowedValues=[
+        "kafka.t3.small",
+        "kafka.m5.large",
+        "kafka.m5.xlarge",
+        "kafka.m5.2xlarge",
+        "kafka.m5.4xlarge",
+        "kafka.m5.8xlarge",
+        "kafka.m5.12xlarge",
+        "kafka.m5.16xlarge",
+        "kafka.m5.24xlarge",
+    ],
+    Default="kafka.m5.large",
+)
+
 MSK_CLUSTER_SG_PARAM_T = "MSKClusterSecurityGroup"
 MSK_CLUSTER_SG_PARAM = Parameter(
     MSK_CLUSTER_SG_PARAM_T,

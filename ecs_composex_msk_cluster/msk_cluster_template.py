@@ -17,6 +17,7 @@ from ecs_composex.common.cfn_params import ROOT_STACK_NAME
 from ecs_composex.common.logging import LOG
 from ecs_composex.common.stacks import ComposeXStack
 from ecs_composex.common.troposphere_tools import (
+    Parameter,
     add_outputs,
     add_resource,
     build_template,
@@ -46,6 +47,7 @@ from .msk_cluster_conditions import (
 )
 from .msk_cluster_params import (
     MSK_CLUSTER_ADDRESSING_TYPE,
+    MSK_CLUSTER_INSTANCE_TYPES,
     MSK_CLUSTER_SG_PARAM,
     MSK_CLUSTER_USE_SASL_IAM,
     MSK_CLUSTER_USE_SASL_SCRAM,
@@ -67,24 +69,27 @@ class MskClusterStack(ComposeXStack):
         self.cluster.stack = self
 
 
-def validate_cluster_version(cluster: MskCluster, input_version) -> None:
+def validate_cluster_version(cluster: MskCluster, input_version) -> Parameter:
     """
     Validates the kafka version
     """
-    versions = list_all_kafka_versions(session=cluster.lookup_session)
-    for version in versions:
-        if version["Version"] == input_version:
-            break
+    valid_versions: list[str] = [
+        _version["Version"]
+        for _version in list_all_kafka_versions(session=cluster.lookup_session)
+        if _version["Status"] == "ACTIVE"
+    ]
+    if input_version in valid_versions:
+        return Parameter(
+            "KafkaVersion",
+            Type="String",
+            AllowedValues=valid_versions,
+            Default=input_version,
+        )
     else:
         raise ValueError(
-            f"{cluster.module.res_key}.{cluster.name} - ",
-            f"Version {input_version} is not valid. Versions supported",
-            [_v["Version"] for _v in versions if _v["Status"] == "ACTIVE"],
-        )
-    if keyisset("Status", version) and version["Status"] != "ACTIVE":
-        raise ValueError(
-            f"{cluster.module.res_key}.{cluster.name} - "
-            f"Version {version['Version']} is not active: {version['Status']}"
+            "Version {} is not valid. Active versions supported: {}".format(
+                input_version, valid_versions
+            )
         )
 
 
@@ -99,6 +104,7 @@ def set_msk_cluster_template(module: XResourceModule, cluster: MskCluster) -> Te
             STORAGE_SUBNETS,
             APP_SUBNETS,
             PUBLIC_SUBNETS,
+            MSK_CLUSTER_INSTANCE_TYPES,
         ],
     )
     template.add_condition(
@@ -110,6 +116,32 @@ def set_msk_cluster_template(module: XResourceModule, cluster: MskCluster) -> Te
     template.add_condition(CLIENTS_USE_TLS_AUTH_CON_T, CLIENTS_USE_TLS_AUTH_CON)
     template.add_mapping("MSKPorts", MSK_PORTS_MAPPING)
     return template
+
+
+def set_instance_type(cluster: MskCluster, cluster_stack: ComposeXStack) -> None:
+    """
+    Checks the instance type value. Replaces it with parameter.
+    Updates parameter value if valid, uses Default if not
+    """
+    instance_type = getattr(cluster.cfn_resource.BrokerNodeGroupInfo, "InstanceType")
+    if instance_type not in MSK_CLUSTER_INSTANCE_TYPES.AllowedValues:
+        LOG.error(
+            "{}.{} - {} InstanceType is not valid. Using default {}".format(
+                cluster.module.res_key,
+                cluster.name,
+                instance_type,
+                MSK_CLUSTER_INSTANCE_TYPES.Default,
+            )
+        )
+    else:
+        cluster_stack.Parameters.update(
+            {MSK_CLUSTER_INSTANCE_TYPES.title: instance_type}
+        )
+    setattr(
+        cluster.cfn_resource.BrokerNodeGroupInfo,
+        "InstanceType",
+        Ref(MSK_CLUSTER_INSTANCE_TYPES),
+    )
 
 
 def build_msk_clusters(module: XResourceModule, msk_top_stack: ComposeXStack):
@@ -187,7 +219,10 @@ def build_msk_clusters(module: XResourceModule, msk_top_stack: ComposeXStack):
                 }
             )
         cluster.cfn_resource = AwsMskCluster(cluster.logical_name, **cluster_props)
-        validate_cluster_version(cluster, cluster.cfn_resource.KafkaVersion)
+        version_param = cluster_template.add_parameter(
+            validate_cluster_version(cluster, cluster.cfn_resource.KafkaVersion)
+        )
+        setattr(cluster.cfn_resource, "KafkaVersion", Ref(version_param))
         cluster_stack = MskClusterStack(
             cluster.logical_name,
             cluster=cluster,
@@ -199,8 +234,10 @@ def build_msk_clusters(module: XResourceModule, msk_top_stack: ComposeXStack):
                 STORAGE_SUBNETS.title: Ref(STORAGE_SUBNETS),
                 PUBLIC_SUBNETS.title: Ref(PUBLIC_SUBNETS),
                 APP_SUBNETS.title: Ref(APP_SUBNETS),
+                version_param.title: version_param.Default,
             },
         )
+        set_instance_type(cluster, cluster_stack)
 
         handle_msk_auth_settings(cluster)
         add_resource(cluster_template, cluster.cfn_resource)
