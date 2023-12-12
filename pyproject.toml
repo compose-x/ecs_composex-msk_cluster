@@ -30,7 +30,7 @@ exclude = ["*.pyc", "*~", "*pycache*"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-ecs_composex = "^0.23.19"
+ecs_composex = "^0.24"
 compose-x-common = "^1.2"
 
 [tool.poetry.dev-dependencies]
