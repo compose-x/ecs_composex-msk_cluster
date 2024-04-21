@@ -29,8 +29,8 @@ include = [
 exclude = ["*.pyc", "*~", "*pycache*"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
-ecs_composex = "^0.24"
+python = "^3.9"
+ecs_composex = "^1.1"
 compose-x-common = "^1.2"
 
 [tool.poetry.dev-dependencies]
