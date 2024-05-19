@@ -202,9 +202,11 @@ def handle_iam_kafka_resources_access(
             "Sid": "ConnectToCluster",
             "Effect": "Allow",
             "Resource": [
-                Ref(cluster_arn_id["ImportParameter"])
-                if resource.cfn_resource
-                else cluster_arn_id
+                (
+                    Ref(cluster_arn_id["ImportParameter"])
+                    if resource.cfn_resource
+                    else cluster_arn_id
+                )
             ],
             "Action": ["kafka-cluster:Connect"],
         }
