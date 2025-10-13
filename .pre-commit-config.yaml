@@ -9,12 +9,12 @@ repos:
       - id: fix-encoding-pragma
       - id: forbid-new-submodules
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.15.2
+    rev: v3.21.0
     hooks:
       - id: pyupgrade
-        args: [ "--py38-plus" ]
+        args: [ "--py310-plus" ]
   - repo: https://github.com/psf/black
-    rev: 24.4.2
+    rev: 25.9.0
     hooks:
       - id: black
   - repo: https://github.com/pycqa/isort

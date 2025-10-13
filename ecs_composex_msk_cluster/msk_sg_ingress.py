@@ -1,5 +1,5 @@
 #  SPDX-License-Identifier: MPL-2.0
-#  Copyright 2020-2022 John Mille <john@compose-x.io>
+#  Copyright 2020-present John Mille <john@compose-x.io>
 
 from __future__ import annotations
 
@@ -59,7 +59,7 @@ def allow_clients_sg_ingress(cluster) -> list[If]:
                 CLUSTER_PUBLICLY_ADDRESSED_CON_T,
                 [
                     {
-                        "Description": f"SASL IAM Public Access",
+                        "Description": "SASL IAM Public Access",
                         "FromPort": FindInMap("MSKPorts", "Public", "Iam"),
                         "ToPort": FindInMap("MSKPorts", "Public", "Iam"),
                         "SourceSecurityGroupId": GetAtt(
@@ -69,7 +69,7 @@ def allow_clients_sg_ingress(cluster) -> list[If]:
                         "IpProtocol": 6,
                     },
                     {
-                        "Description": f"SASL IAM Private Access",
+                        "Description": "SASL IAM Private Access",
                         "FromPort": FindInMap("MSKPorts", "Private", "Iam"),
                         "ToPort": FindInMap("MSKPorts", "Private", "Iam"),
                         "SourceSecurityGroupId": GetAtt(
@@ -80,7 +80,7 @@ def allow_clients_sg_ingress(cluster) -> list[If]:
                     },
                 ],
                 {
-                    "Description": f"SASL IAM Private Access",
+                    "Description": "SASL IAM Private Access",
                     "FromPort": FindInMap("MSKPorts", "Private", "Iam"),
                     "ToPort": FindInMap("MSKPorts", "Private", "Iam"),
                     "SourceSecurityGroupId": GetAtt(
@@ -100,7 +100,7 @@ def allow_clients_sg_ingress(cluster) -> list[If]:
                 CLUSTER_PUBLICLY_ADDRESSED_CON_T,
                 [
                     {
-                        "Description": f"SASL SCRAM Public Access",
+                        "Description": "SASL SCRAM Public Access",
                         "FromPort": FindInMap("MSKPorts", "Public", "Scram"),
                         "ToPort": FindInMap("MSKPorts", "Public", "Scram"),
                         "SourceSecurityGroupId": GetAtt(
@@ -110,7 +110,7 @@ def allow_clients_sg_ingress(cluster) -> list[If]:
                         "IpProtocol": 6,
                     },
                     {
-                        "Description": f"SASL SCRAM Private Access",
+                        "Description": "SASL SCRAM Private Access",
                         "FromPort": FindInMap("MSKPorts", "Private", "Scram"),
                         "ToPort": FindInMap("MSKPorts", "Private", "Scram"),
                         "SourceSecurityGroupId": GetAtt(
@@ -121,7 +121,7 @@ def allow_clients_sg_ingress(cluster) -> list[If]:
                     },
                 ],
                 {
-                    "Description": f"SASL SCRAM Private Access",
+                    "Description": "SASL SCRAM Private Access",
                     "FromPort": FindInMap("MSKPorts", "Private", "Scram"),
                     "ToPort": FindInMap("MSKPorts", "Private", "Scram"),
                     "SourceSecurityGroupId": GetAtt(
@@ -141,7 +141,7 @@ def allow_clients_sg_ingress(cluster) -> list[If]:
                 CLUSTER_PUBLICLY_ADDRESSED_CON_T,
                 [
                     {
-                        "Description": f"TLS Authentication Public Access",
+                        "Description": "TLS Authentication Public Access",
                         "FromPort": FindInMap("MSKPorts", "Public", "Tls"),
                         "ToPort": FindInMap("MSKPorts", "Public", "Tls"),
                         "SourceSecurityGroupId": GetAtt(
@@ -151,7 +151,7 @@ def allow_clients_sg_ingress(cluster) -> list[If]:
                         "IpProtocol": 6,
                     },
                     {
-                        "Description": f"TLS Authentication Private Access",
+                        "Description": "TLS Authentication Private Access",
                         "FromPort": FindInMap("MSKPorts", "Private", "Tls"),
                         "ToPort": FindInMap("MSKPorts", "Private", "Tls"),
                         "SourceSecurityGroupId": GetAtt(
@@ -162,7 +162,7 @@ def allow_clients_sg_ingress(cluster) -> list[If]:
                     },
                 ],
                 {
-                    "Description": f"TLS Authentication Private Access",
+                    "Description": "TLS Authentication Private Access",
                     "FromPort": FindInMap("MSKPorts", "Private", "Tls"),
                     "ToPort": FindInMap("MSKPorts", "Private", "Tls"),
                     "SourceSecurityGroupId": GetAtt(

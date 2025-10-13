@@ -1,5 +1,5 @@
 #  SPDX-License-Identifier: MPL-2.0
-#  Copyright 2020-2022 John Mille <john@compose-x.io>
+#  Copyright 2020-present John Mille <john@compose-x.io>
 
 from __future__ import annotations
 
@@ -13,7 +13,9 @@ if TYPE_CHECKING:
 from compose_x_common.aws.msk import MSK_CLUSTER_ARN_RE
 from compose_x_common.compose_x_common import keyisset
 from ecs_composex.common.logging import LOG
-from ecs_composex.compose.x_resources.network_x_resources import NetworkXResource
+from ecs_composex.compose.x_resources.network_x_resources import (
+    NetworkXResource,
+)
 from ecs_composex.ingress_settings import lookup_security_group
 from ecs_composex.resource_settings import link_resource_to_services
 from ecs_composex.vpc.vpc_params import STORAGE_SUBNETS
@@ -64,7 +66,8 @@ class MskCluster(NetworkXResource):
             return Select(
                 1,
                 Split(
-                    ":cluster/", self.attributes_outputs[MSK_CLUSTER_ARN]["ImportValue"]
+                    ":cluster/",
+                    self.attributes_outputs[MSK_CLUSTER_ARN]["ImportValue"],
                 ),
             )
 
@@ -78,7 +81,7 @@ class MskCluster(NetworkXResource):
                 self.security_group_param.return_value,
             ),
             MSK_CLUSTER_CLIENTS_SHARED_SG: (
-                f"{self.logical_name}{self.clients_security_group_param.title}",
+                f"{self.logical_name}" f"{self.clients_security_group_param.title}",
                 self.clients_security_group,
                 GetAtt,
                 self.clients_security_group_param.return_value,
@@ -93,7 +96,9 @@ class MskCluster(NetworkXResource):
             if target[0].service_compute.launch_type != "EXTERNAL":
                 if self.cfn_resource:
                     client_sg_id = self.add_attribute_to_another_stack(
-                        target[0].stack, self.clients_security_group_param, settings
+                        target[0].stack,
+                        self.clients_security_group_param,
+                        settings,
                     )
                     target[0].service_networking.extra_security_groups.append(
                         client_sg_id["ImportParameter"]

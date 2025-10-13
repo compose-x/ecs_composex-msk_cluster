@@ -13,9 +13,8 @@ classifiers = [
   "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
   "Natural Language :: English",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.8",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
 ]
 
 readme = "README.rst"
@@ -29,11 +28,11 @@ include = [
 exclude = ["*.pyc", "*~", "*pycache*"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 ecs_composex = "^1.1"
 compose-x-common = "^1.1"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 black = "^24.1"
 isort = "^5.12"
 coverage = "^7.0"
@@ -75,6 +74,9 @@ exclude_lines = [
 omit = [
   "*/cli.py"
 ]
+
+[tool.flake8]
+max-line-length = 88
 
 [tool.tbump]
 github_url = "https://github.com/compose-x/ecs_composex_msk_cluster"

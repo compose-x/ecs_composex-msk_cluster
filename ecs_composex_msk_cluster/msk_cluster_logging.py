@@ -1,5 +1,5 @@
 #  SPDX-License-Identifier: MPL-2.0
-#  Copyright 2020-2022 John Mille <john@compose-x.io>
+#  Copyright 2020-present John Mille <john@compose-x.io>
 
 from __future__ import annotations
 
@@ -14,8 +14,6 @@ from compose_x_common.compose_x_common import keyisset
 from ecs_composex.common import get_nested_property
 from ecs_composex.common.logging import LOG
 from ecs_composex.common.troposphere_tools import add_resource
-from ecs_composex.kinesis_firehose.kinesis_firehose_stack import DeliveryStream
-from ecs_composex.s3.s3_bucket import Bucket
 from troposphere import Ref
 from troposphere.logs import LogGroup
 from troposphere.msk import BrokerLogs, CloudWatchLogs, LoggingInfo
@@ -39,7 +37,11 @@ def add_log_group(cluster: MskCluster, template: Template) -> None:
         log_group = LogGroup(f"{cluster.logical_name}BrokersLogGroup")
         add_resource(template, log_group)
         if value and value is not None:
-            setattr(param, prop, CloudWatchLogs(Enabled=True, LogGroup=Ref(log_group)))
+            setattr(
+                param,
+                prop,
+                CloudWatchLogs(Enabled=True, LogGroup=Ref(log_group)),
+            )
         else:
             if not hasattr(cluster.cfn_resource, "LoggingInfo"):
                 setattr(
@@ -55,7 +57,8 @@ def add_log_group(cluster: MskCluster, template: Template) -> None:
                 )
             else:
                 if not hasattr(
-                    cluster.cfn_resource.LoggingInfo.BrokerLogs, "CloudWatchLogs"
+                    cluster.cfn_resource.LoggingInfo.BrokerLogs,
+                    "CloudWatchLogs",
                 ):
                     setattr(
                         cluster.cfn_resource.LoggingInfo,

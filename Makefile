@@ -48,7 +48,7 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr .pytest_cache
 
 lint: ## check style with flake8
-	flake8 ecs_composex_msk_cluster tests
+	flake8 --max-line-length=88 ecs_composex_msk_cluster tests
 
 test: ## run tests quickly with the default Python
 	pytest -svx tests/

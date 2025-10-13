@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MPL-2.0
-# Copyright 2020-2022 John Mille <john@compose-x.io>
+# Copyright 2020-present John Mille <john@compose-x.io>
 
 """
 Configure MSK Cluster autoscaling
@@ -7,7 +7,6 @@ Configure MSK Cluster autoscaling
 
 from __future__ import annotations
 
-import logging
 from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
@@ -17,18 +16,10 @@ if TYPE_CHECKING:
 from compose_x_common.compose_x_common import set_else_none
 from ecs_composex.common.cfn_conditions import define_stack_name
 from ecs_composex.common.troposphere_tools import add_resource
-from troposphere import (
-    AWS_ACCOUNT_ID,
-    AWS_PARTITION,
-    AWS_REGION,
-    AWS_URL_SUFFIX,
-    Ref,
-    Sub,
-)
+from troposphere import AWS_ACCOUNT_ID, AWS_PARTITION, AWS_URL_SUFFIX, Ref, Sub
 from troposphere.applicationautoscaling import (
     PredefinedMetricSpecification,
     ScalableTarget,
-    ScalableTargetAction,
     ScalingPolicy,
     TargetTrackingScalingPolicyConfiguration,
 )

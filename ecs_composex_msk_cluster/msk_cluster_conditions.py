@@ -1,12 +1,12 @@
 #  SPDX-License-Identifier: MPL-2.0
-#  Copyright 2020-2022 John Mille <john@compose-x.io>
+#  Copyright 2020-present John Mille <john@compose-x.io>
 
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from troposphere import Template
+    pass
 
-from troposphere import Condition, Equals, If, Not, Or, Ref
+from troposphere import Condition, Equals, Not, Ref
 
 from .msk_cluster_params import (
     MSK_CLUSTER_ADDRESSING_TYPE,

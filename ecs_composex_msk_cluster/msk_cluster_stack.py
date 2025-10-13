@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MPL-2.0
-# Copyright 2020-2022 John Mille <john@compose-x.io>
+# Copyright 2020-present John Mille <john@compose-x.io>
 
 """Main module."""
 
@@ -31,7 +31,11 @@ class XStack(ComposeXStack):
     """
 
     def __init__(
-        self, title: str, settings: ComposeXSettings, module: XResourceModule, **kwargs
+        self,
+        title: str,
+        settings: ComposeXSettings,
+        module: XResourceModule,
+        **kwargs,
     ):
         if module.lookup_resources:
             if not keyisset(module.mapping_key, settings.mappings):

@@ -1,5 +1,5 @@
 #  SPDX-License-Identifier: MPL-2.0
-#  Copyright 2020-2022 John Mille <john@compose-x.io>
+#  Copyright 2020-present John Mille <john@compose-x.io>
 
 from __future__ import annotations
 
@@ -184,7 +184,8 @@ def build_msk_clusters(module: XResourceModule, msk_top_stack: ComposeXStack):
                     StackName=define_stack_name(),
                 ),
                 GroupDescription=Sub(
-                    f"${{StackName}} {cluster.name}", StackName=define_stack_name()
+                    f"${{StackName}} {cluster.name}",
+                    StackName=define_stack_name(),
                 ),
                 VpcId=Ref(VPC_ID),
             ),
